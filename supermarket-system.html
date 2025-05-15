@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Supermarket System - Full Featured</title>
+  <style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+    /* Reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      color: var(--text-color);
+      background: var(--background);
+      transition: background 0.3s ease, color 0.3s ease;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    :root {
+      --background: linear-gradient(135deg, #1f3a93, #60a3bc);
+      --primary-color: #214a8f;
+      --shadow-color: rgba(33, 74, 143, 0.15);
+      --text-color: #222f3e;
+      --background-light: #f0f4f8;
+      --background-dark: #1b1b1b;
+      --text-light: #f0f0f0;
+      --shadow-color-dark: rgba(255 255 255 / 0.2);
+    }
+    body.dark {
+      --background: var(--background-dark);
+      --text-color: var(--text-light);
+      --shadow-color: var(--shadow-color-dark);
+    }
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    a:hover, button:hover, button:focus-visible {
+      text-decoration: underline;
+    }
+    #app {
+      width: 95%;
+      max-width: 1200px;
+      margin: 40px 0 40px 0;
+      background: var(--background-light);
+      border-radius: 20px;
+      box-shadow: 0 4px 14px var(--shadow-color);
+      overflow: hidden;
+      padding: 20px 30px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s ease;
+    }
+    body.dark #app {
+      background: #222;
+      box-shadow: 0 4px 24px var(--shadow-color-dark);
+    }
+    header {
+      color: var(--primary-color);
+      font-size: 2.8rem;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 24px;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    body.dark header {
+      color: #aac9ff;
+    }
+    #navBar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+    #navBar span, #navBar button {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--primary-color);
+      background: transparent;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 12px;
+      transition: background-color 0.3s ease;
+    }
+    body.dark #navBar span, body.dark #navBar button {
+      color: #aebcff;
+    }
+    #navBar span {
+      cursor: default;
+      user-select: text;
+    }
+    #navBar button:hover, #navBar button:focus-visible {
+      background-color: var(--primary-color);
+      color: white;
+      outline-offset: 3px;
+      cursor: pointer;
+    }
+    /* Dark Mode toggle style */
+    #darkModeToggle {
+      border: 2px solid var(--primary-color);
+      cursor: pointer;
+    }
+    /* Login View */
+    #loginView {
+      max-width: 400px;
+      margin: 0 auto;
+      background: var(--background-light);
+      border-radius: 18px;
+      padding: 30px 24px;
+      box-shadow: 0 4px 16px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s ease;
+    }
+    body.dark #loginView {
+      background: #222;
+      box-shadow: 0 4px 24px var(--shadow-color-dark);
+    }
+    #loginView h2 {
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: var(--primary-color);
+      user-select: none;
+      text-align: center;
+    }
+    body.dark #loginView h2 {
+      color: #aac9ff;
+    }
+    #loginView label {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+      transition: color 0.3s ease;
+    }
+    body.dark #loginView label {
+      color: #aac9ff;
+    }
+    #loginView input[type="text"],
+    #loginView input[type="password"] {
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 14px;
+      border: 2px solid #a7c1ff;
+      outline-color: var(--primary-color);
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+      background: white;
+      color: #222;
+    }
+    body.dark #loginView input[type="text"],
+    body.dark #loginView input[type="password"] {
+      background: #333;
+      color: #ddd;
+      border-color: #5179e0;
+    }
+    #loginView input[type="text"]:focus,
+    #loginView input[type="password"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 10px var(--primary-color);
+    }
+    #loginBtn {
+      margin-top: 25px;
+      background: var(--primary-color);
+      color: white;
+      font-weight: 700;
+      border: none;
+      border-radius: 20px;
+      font-size: 1.2rem;
+      padding: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 26px rgba(33,74,143,0.8);
+      transition: background-color 0.3s ease;
+    }
+    #loginBtn:hover {
+      background-color: #162f69;
+    }
+    #loginError {
+      color: #c1272d;
+      font-weight: 700;
+      margin-top: 12px;
+      user-select: none;
+      text-align: center;
+      min-height: 20px;
+    }
+    /* Main Content */
+    #mainContent {
+      display: flex;
+      gap: 26px;
+      flex-grow: 1;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+    body.dark #mainContent {
+      background: #1b1b1b;
+    }
+    /* Sidebar styling */
+    #sidebar {
+      flex-basis: 310px;
+      background: var(--background-light);
+      border-radius: 18px;
+      padding: 18px 24px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      transition: background 0.3s ease;
+    }
+    body.dark #sidebar {
+      background: #262626;
+    }
+    #sidebar h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+      border-bottom: 2px solid #7aa5f4;
+      padding-bottom: 8px;
+      font-weight: 700;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    body.dark #sidebar h3 {
+      color: #aac9ff;
+    }
+    /* User sidebar */
+    #userPanel {
+      margin-top: 10px;
+      color: var(--primary-color);
+      transition: color 0.3s ease;
+    }
+    body.dark #userPanel {
+      color: #aebcff;
+    }
+    #userInfo {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 14px;
+      user-select: text;
+    }
+    #loyaltyInput {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    #loyaltyCodeInput {
+      flex-grow: 1;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 2px solid #a7c1ff;
+      outline-color: #214a8f;
+      font-size: 1rem;
+      user-select: text;
+      background: white;
+      color: #222;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    body.dark #loyaltyCodeInput {
+      background: #333;
+      color: #ddd;
+      border-color: #5179e0;
+    }
+    #loyaltyCodeInput:focus {
+      box-shadow: 0 0 8px #214a8faa;
+      border-color: #214a8f;
+    }
+    #applyCouponBtn {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      font-size: 1rem;
+      padding: 10px 14px;
+      box-shadow: 0 4px 14px rgba(33,74,143,0.7);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #applyCouponBtn:hover, #applyCouponBtn:focus-visible {
+      background-color: #16365b;
+    }
+    #loyaltyMsg {
+      margin-top: 10px;
+      font-weight: 700;
+      min-height: 24px;
+    }
+    /* Reward points display */
+    #rewardPointsDisplay {
+      margin-top: 14px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      user-select: text;
+      text-align: center;
+      transition: color 0.3s ease;
+      color: var(--primary-color);
+    }
+    body.dark #rewardPointsDisplay {
+      color: #aebcff;
+    }
+    /* Admin sidebar */
+    #adminPanel {
+      margin-top: 10px;
+    }
+    #adminInventoryList, #catalogView {
+      overflow-y: auto;
+    }
+    #adminProductTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      user-select: text;
+    }
+    #adminProductTable th, #adminProductTable td {
+      border: 1px solid #bbccf1;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    #adminProductTable th {
+      background: #d6e6f7;
+      font-weight: 700;
+      color: var(--primary-color);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    body.dark #adminProductTable th {
+      background: #254a8f;
+      color: #ccd7ff;
+    }
+    #adminProductTable td img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: white;
+      padding: 6px;
+      margin: auto;
+      display: block;
+      filter: drop-shadow(0 1px 2px rgba(33,58,88,0.2));
+    }
+    body.dark #adminProductTable td img {
+      background: #3a3a3a;
+    }
+    #adminProductTable input[type="number"] {
+      width: 60px;
+      padding: 6px 8px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid #a7c1ff;
+      outline-color: var(--primary-color);
+      transition: border-color 0.3s ease;
+    }
+    #adminProductTable input[type="number"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 7px var(--primary-color);
+    }
+    #adminProductTable button {
+      padding: 6px 12px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: var(--primary-color);
+      color: white;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #adminProductTable button:hover {
+      background: #102a5b;
+    }
+    #adminAddForm {
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 2px solid #7aa5f4;
+      user-select: none;
+    }
+    #adminAddForm label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: 700;
+      color: var(--primary-color);
+      transition: color 0.3s ease;
+    }
+    body.dark #adminAddForm label {
+      color: #aebcff;
+    }
+    #adminAddForm input[type="text"],
+    #adminAddForm input[type="number"],
+    #adminAddForm input[type="url"] {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 2px solid #aac1ff;
+      font-size: 1rem;
+      outline-color: var(--primary-color);
+      box-sizing: border-box;
+      transition: box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+      background: white;
+      color: #222;
+    }
+    body.dark #adminAddForm input[type="text"],
+    body.dark #adminAddForm input[type="number"],
+    body.dark #adminAddForm input[type="url"] {
+      background: #333;
+      color: #ddd;
+      border-color: #5179e0;
+    }
+    #adminAddForm input[type="text"]:focus,
+    #adminAddForm input[type="number"]:focus,
+    #adminAddForm input[type="url"]:focus {
+      box-shadow: 0 0 8px var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    #adminAddForm button {
+      margin-top: 18px;
+      padding: 14px 0;
+      font-weight: 700;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 22px rgba(33,74,143,0.8);
+      transition: background-color 0.3s ease;
+      user-select: none;
+      width: 100%;
+    }
+    #adminAddForm button:hover {
+      background-color: #102a5b;
+    }
+    #adminMsg {
+      margin-top: 12px;
+      font-weight: 700;
+      color: #b32020;
+      user-select: none;
+      min-height: 20px;
+    }
+    /* Catalog & cart */
+    #catalogAndCart {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      max-height: 600px;
+    }
+    #catalogView {
+      flex-grow: 1;
+      overflow-y: auto;
+      user-select: none;
+      margin-bottom: 20px;
+      transition: background 0.3s ease;
+    }
+    body.dark #catalogView {
+      background: #222;
+      border-radius: 16px;
+      padding: 20px;
+    }
+    #catalogView h2 {
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 12px;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    body.dark #catalogView h2 {
+      color: #aebcff;
+    }
+    #catalogView #productFilter {
+      margin-bottom: 14px;
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 1.1rem;
+      border-radius: 16px;
+      border: 2px solid #60a3bc;
+      outline-color: var(--primary-color);
+      user-select: text;
+      transition: box-shadow 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+      background: white;
+      color: #222;
+      box-sizing: border-box;
+    }
+    body.dark #catalogView #productFilter {
+      background: #333;
+      color: #ddd;
+      border-color: #5179e0;
+    }
+    #catalogView #productFilter:focus {
+      box-shadow: 0 0 8px var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .product-list p {
+      font-style: italic;
+      text-align: center;
+      color: #807f7f;
+      font-weight: 600;
+      user-select: none;
+    }
+    .product-card {
+      background: #eef5ff;
+      border-radius: 18px;
+      padding: 18px 16px 24px;
+      box-shadow: 0 4px 10px rgba(30,55,153,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: box-shadow 0.3s ease, transform 0.25s ease;
+      cursor: pointer;
+    }
+    body.dark .product-card {
+      background: #2d2d2d;
+      box-shadow: 0 4px 14px rgba(180,180,255,0.12);
+    }
+    .product-card:hover, .product-card:focus-within {
+      box-shadow: 0 8px 26px rgba(30,55,153,0.18);
+      transform: translateY(-6px);
+      outline: none;
+    }
+    .product-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      background: white;
+      border-radius: 14px;
+      padding: 12px;
+      box-sizing: border-box;
+      user-select: none;
+      filter: drop-shadow(1px 1px 1.5px rgba(33,58,88,0.18));
+      transition: filter 0.3s ease;
+      display: block;
+      vertical-align: middle;
+    }
+    body.dark .product-card img {
+      background: #444;
+      filter: drop-shadow(1px 1px 3px rgba(180,180,255,0.4));
+    }
+    .product-name {
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary-color);
+      text-align: center;
+      min-height: 56px;
+      user-select: text;
+      transition: color 0.3s ease;
+    }
+    body.dark .product-name {
+      color: #aac9ff;
+    }
+    .product-price {
+      margin-top: 8px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #3366cc;
+      user-select: text;
+    }
+    body.dark .product-price {
+      color: #a3b9ff;
+    }
+    .product-stock {
+      margin-top: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #666;
+      user-select: text;
+      transition: color 0.3s ease;
+    }
+    body.dark .product-stock {
+      color: #999;
+    }
+    .btn-add {
+      margin-top: auto;
+      width: 100%;
+      padding: 12px 0;
+      background: #3366cc;
+      border: none;
+      border-radius: 16px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+      box-shadow: 0 6px 18px rgba(51,102,204,0.75);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn-add:disabled {
+      background-color: #bbbcc4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .btn-add:hover:not(:disabled), .btn-add:focus-visible:not(:disabled) {
+      background-color: #254a99;
+      box-shadow: 0 10px 30px rgba(37,74,153,0.95);
+      outline-offset: 2px;
+    }
+    /* Cart */
+    #cartView {
+      background: var(--background-light);
+      padding: 20px 25px;
+      border-radius: 18px;
+      max-height: 430px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 24px var(--shadow-color);
+      transition: background 0.3s ease;
+    }
+    body.dark #cartView {
+      background: #222;
+      box-shadow: 0 6px 28px var(--shadow-color-dark);
+    }
+    #cartView h2 {
+      margin-top: 0;
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 18px;
+      transition: color 0.3s ease;
+    }
+    body.dark #cartView h2 {
+      color: #aebcff;
+    }
+    .cart-list p {
+      font-style: italic;
+      text-align: center;
+      user-select: none;
+      color: #6a7c9a;
+      font-weight: 600;
+    }
+    .cart-item {
+      display: flex;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 1px 8px rgb(33 74 143 / 0.13);
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      align-items: center;
+      gap: 18px;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    body.dark .cart-item {
+      background: #333;
+      box-shadow: 0 1px 10px rgba(180,180,255,0.1);
+    }
+    .cart-item:hover {
+      background-color: #eff6ff;
+    }
+    body.dark .cart-item:hover {
+      background-color: #444d66;
+    }
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 14px;
+      background: white;
+      padding: 12px;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 2px rgba(33,58,88,0.2));
+      user-select: none;
+      transition: background 0.3s ease, filter 0.3s ease;
+    }
+    body.dark .cart-item img {
+      background: #444;
+      filter: drop-shadow(0 1px 3px rgba(180,180,255,0.4));
+    }
+    .cart-item .item-info {
+      flex-grow: 1;
+    }
+    .cart-item .item-name {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--primary-color);
+      user-select: text;
+      transition: color 0.3s ease;
+    }
+    body.dark .cart-item .item-name {
+      color: #aebcff;
+    }
+    .cart-item .item-price {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #214a8f;
+      min-width: 90px;
+      text-align: right;
+      user-select: text;
+      transition: color 0.3s ease;
+    }
+    body.dark .cart-item .item-price {
+      color: #a3b9ff;
+    }
+    .cart-item .item-qty {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .cart-item .item-qty button {
+      width: 32px;
+      height: 32px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 10px;
+      border: none;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--shadow-color);
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    body.dark .cart-item .item-qty button {
+      box-shadow: 0 0 10px var(--shadow-color-dark);
+    }
+    .cart-item .item-qty button:hover {
+      background: #0f2a5d;
+    }
+    #cartTotal {
+      font-size: 1.9rem;
+      font-weight: 900;
+      text-align: right;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+      user-select: text;
+    }
+    body.dark #cartTotal {
+      color: #aebcff;
+    }
+    #checkoutBtn {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 900;
+      padding: 16px 0;
+      border-radius: 24px;
+      width: 100%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 10px 30px rgba(33,74,143,0.9);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #checkoutBtn:disabled {
+      background: #bbbcc4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    #checkoutBtn:not(:disabled):hover, #checkoutBtn:not(:disabled):focus-visible {
+      background-color: #102a5b;
+      box-shadow: 0 12px 40px rgba(8,32,71,0.95);
+      outline-offset: 4px;
+    }
+    #checkoutMsg {
+      margin-top: 6px;
+      font-weight: 700;
+      color: #b32020;
+      min-height: 20px;
+    }
+    #rewardPointsDisplay {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-top: 16px;
+      user-select: text;
+      text-align: center;
+      transition: color 0.3s ease;
+    }
+    body.dark #rewardPointsDisplay {
+      color: #aebcff;
+    }
+    footer {
+      margin: 40px 0 12px 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-color);
+      user-select: none;
+      text-align: center;
+      transition: color 0.3s ease;
+    }
+    body.dark footer {
+      color: var(--text-light);
+    }
+    footer a {
+      color: var(--primary-color);
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    footer a:hover, footer a:focus-visible {
+      text-decoration: underline;
+      outline-offset: 3px;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 35, 94, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.4s ease forwards;
+      user-select: none;
+    }
+    .modal {
+      background: var(--background-light);
+      border-radius: 20px;
+      max-width: 480px;
+      width: 90%;
+      padding: 38px 36px;
+      box-shadow:
+        0 14px 50px rgba(14,35,94,0.35);
+      text-align: center;
+      transform: translateY(-40px);
+      animation: slideDown 0.45s ease forwards;
+      user-select: text;
+      transition: background 0.3s ease;
+    }
+    body.dark .modal {
+      background: #222;
+    }
+    .modal h3 {
+      margin-bottom: 28px;
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+    body.dark .modal h3 {
+      color: #aebcff;
+    }
+    .modal p {
+      font-size: 1.25rem;
+      margin-bottom: 36px;
+      line-height: 1.5;
+      color: #34495e;
+      word-break: break-word;
+      max-height: 360px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      padding-right: 12px;
+      transition: color 0.3s ease;
+    }
+    body.dark .modal p {
+      color: #ccc;
+    }
+    .modal button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 16px 44px;
+      font-weight: 700;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 1.25rem;
+      box-shadow: 0 8px 32px rgba(33,74,143,0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      user-select: none;
+    }
+    .modal button:hover, .modal button:focus-visible {
+      background-color: #0e235e;
+      box-shadow: 0 14px 48px rgba(14,35,94,0.95);
+      transform: translateY(-3px);
+      outline-offset: 4px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0 }
+      to { opacity: 1 }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-40px) }
+      to { opacity: 1; transform: translateY(0) }
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--background-light);
+      border-radius: 16px;
+      transition: background 0.3s ease;
+    }
+    body.dark ::-webkit-scrollbar-track {
+      background: #333;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 16px;
+      transition: background 0.3s ease;
+    }
+    @media (max-width: 1000px) {
+      #mainContent {
+        flex-direction: column;
+      }
+      #sidebar {
+        flex-basis: auto;
+      }
+      #catalogAndCart {
+        max-height: none;
+      }
+      #cartView {
+        max-height: 350px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>Supermarket System</header>
+  <div id="navBar" role="navigation" aria-label="Main Navigation" hidden>
+    <span id="currentUserDisplay"></span>
+    <div>
+      <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle Dark Mode">Dark Mode</button>
+      <button id="logoutBtn" aria-label="Logout">Logout</button>
+    </div>
+  </div>
+
+  <div id="loginView" role="main" aria-label="Login Form">
+    <h2>Sign In</h2>
+    <label for="usernameInput">Username</label>
+    <input type="text" id="usernameInput" autocomplete="username" placeholder="Enter username" />
+    <label for="passwordInput">Password</label>
+    <input type="password" id="passwordInput" autocomplete="current-password" placeholder="Enter password" />
+    <button id="loginBtn">Login</button>
+    <div id="loginError" aria-live="assertive" role="alert"></div>
+  </div>
+
+  <div id="mainContent" class="hidden" role="main" aria-live="polite">
+    <div id="sidebar" aria-label="Sidebar">
+      <div id="userPanel" class="hidden" tabindex="0">
+        <div id="userInfo"></div>
+        <div id="rewardPointsDisplay" aria-live="polite" aria-atomic="true"></div>
+        <label for="loyaltyCodeInput" style="margin-top: 14px;">Enter discount coupon</label>
+        <div id="loyaltyInput">
+          <input type="text" id="loyaltyCodeInput" placeholder="Coupon code" aria-label="Coupon code" />
+          <button id="applyCouponBtn">Apply</button>
+        </div>
+        <div id="loyaltyMsg" aria-live="polite" role="alert"></div>
+      </div>
+      <div id="adminPanel" class="hidden" aria-label="Admin Dashboard" tabindex="0">
+        <h3>Admin Dashboard</h3>
+        <div><strong>Manage Inventory</strong></div>
+        <table id="adminProductTable" aria-label="Admin product inventory table">
+          <thead>
+            <tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Modify</th></tr>
+          </thead>
+          <tbody id="adminInventoryList"></tbody>
+        </table>
+        <form id="adminAddForm" aria-label="Add new product">
+          <h3>Add New Product</h3>
+          <label for="newProductName">Name</label>
+          <input type="text" id="newProductName" aria-required="true" />
+          <label for="newProductPrice">Price</label>
+          <input type="number" id="newProductPrice" min="0" step="0.01" aria-required="true" />
+          <label for="newProductStock">Stock Quantity</label>
+          <input type="number" id="newProductStock" min="0" step="1" aria-required="true" />
+          <label for="newProductImage">Image URL</label>
+          <input type="url" id="newProductImage" aria-required="true" />
+          <button type="submit" id="adminAddProductBtn">Add Product</button>
+          <div id="adminMsg"></div>
+        </form>
+      </div>
+    </div>
+
+    <div id="catalogAndCart">
+      <section id="catalogView" aria-label="Product Catalog">
+        <h2>Product Catalog</h2>
+        <input id="productFilter" type="text" placeholder="Filter products by name..." aria-label="Filter products" />
+        <div class="product-list" id="productList" tabindex="0"></div>
+      </section>
+      <section id="cartView" aria-label="Shopping Cart">
+        <h2>Your Shopping Cart</h2>
+        <div class="cart-list" id="cartList" role="list"><p>Your cart is empty.</p></div>
+        <div class="cart-total" id="cartTotal">Total: $0.00</div>
+        <button id="checkoutBtn" disabled aria-disabled="true">Checkout</button>
+        <div id="checkoutMsg" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <div class="modal" id="modal">
+      <h3 id="modalTitle">Order Summary</h3>
+      <p id="orderSummary"></p>
+      <button id="closeModalBtn">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    Built with ❤️ by
+    <a href="https://openai.com" target="_blank" rel="noopener noreferrer">Elias</a>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const usersDB = [
+    { username: 'admin', password: 'admin123', role: 'admin' },
+    { username: 'user', password: 'user123', role: 'user' }
+  ];
+  let products = [
+    { id: 1, name: "Fresh Apples (1kg)", price: 3.99, stock: 35, image: "https://cdn-icons-png.flaticon.com/512/415/415680.png" },
+    { id: 2, name: "Whole Wheat Bread", price: 2.49, stock: 40, image: "https://cdn-icons-png.flaticon.com/512/1046/1046769.png" },
+    { id: 3, name: "Milk (1L)", price: 1.89, stock: 30, image: "https://cdn-icons-png.flaticon.com/512/1046/1046828.png" },
+    { id: 4, name: "Cheddar Cheese", price: 4.99, stock: 25, image: "https://cdn-icons-png.flaticon.com/512/3076/3076121.png" },
+    { id: 5, name: "Eggs (dozen)", price: 3.29, stock: 60, image: "https://cdn-icons-png.flaticon.com/512/1046/1046784.png" },
+    { id: 6, name: "Bananas (1kg)", price: 2.79, stock: 50, image: "https://cdn-icons-png.flaticon.com/512/590/590685.png" },
+    { id: 7, name: "Orange Juice (1L)", price: 3.49, stock: 40, image: "https://cdn-icons-png.flaticon.com/512/1046/1046838.png" },
+    { id: 8, name: "Tomatoes (1kg)", price: 2.99, stock: 28, image: "https://cdn-icons-png.flaticon.com/512/3105/3105766.png" },
+    { id: 9, name: "Chicken Breast (500g)", price: 6.99, stock: 35, image: "https://cdn-icons-png.flaticon.com/512/1046/1046755.png" },
+    { id: 10, name: "Rice (1kg)", price: 1.99, stock: 70, image: "https://cdn-icons-png.flaticon.com/512/6906/6906093.png" },
+    { id: 11, name: "Carrots (1kg)", price: 2.15, stock: 45, image: "https://cdn-icons-png.flaticon.com/512/135/135763.png" },
+    { id: 12, name: "Yogurt (500g)", price: 4.25, stock: 38, image: "https://cdn-icons-png.flaticon.com/512/567/567682.png" },
+    { id: 13, name: "Chocolate Bar", price: 1.99, stock: 60, image: "https://cdn-icons-png.flaticon.com/512/1050/1050117.png" },
+    { id: 14, name: "Coffee Pack", price: 7.50, stock: 24, image: "https://cdn-icons-png.flaticon.com/512/2154/2154661.png" },
+    { id: 15, name: "Cucumber (each)", price: 1.25, stock: 52, image: "https://cdn-icons-png.flaticon.com/512/685/685692.png" },
+    { id: 16, name: "Olive Oil (500ml)", price: 5.99, stock: 27, image: "https://cdn-icons-png.flaticon.com/512/3076/3076117.png" },
+    { id: 17, name: "Pasta (500g)", price: 1.75, stock: 50, image: "https://cdn-icons-png.flaticon.com/512/917/917263.png" },
+    { id: 18, name: "Butter (250g)", price: 3.99, stock: 35, image: "https://cdn-icons-png.flaticon.com/512/1322/1322005.png" },
+    { id: 19, name: "Tomato Sauce (400g)", price: 2.45, stock: 40, image: "https://cdn-icons-png.flaticon.com/512/1041/1041872.png" },
+    { id: 20, name: "Sugar (1kg)", price: 1.99, stock: 50, image: "https://cdn-icons-png.flaticon.com/512/1046/1046743.png" },
+    { id: 21, name: "Salt (500g)", price: 1.20, stock: 60, image: "https://cdn-icons-png.flaticon.com/512/1046/1046750.png" },
+    { id: 22, name: "Orange (1kg)", price: 3.10, stock: 30, image: "https://cdn-icons-png.flaticon.com/512/415/415730.png" },
+    { id: 23, name: "Grapes (1kg)", price: 4.99, stock: 28, image: "https://cdn-icons-png.flaticon.com/512/415/415749.png" },
+    { id: 24, name: "Water Bottle (1L)", price: 0.99, stock: 67, image: "https://cdn-icons-png.flaticon.com/512/1046/1046762.png" },
+    { id: 25, name: "Fish Fillet (500g)", price: 7.99, stock: 22, image: "https://cdn-icons-png.flaticon.com/512/188/188987.png" },
+    { id: 26, name: "Lettuce (each)", price: 1.75, stock: 40, image: "https://cdn-icons-png.flaticon.com/512/685/685696.png" },
+    { id: 27, name: "Potatoes (1kg)", price: 3.20, stock: 38, image: "https://cdn-icons-png.flaticon.com/512/685/685678.png" },
+    { id: 28, name: "Onion (1kg)", price: 2.50, stock: 45, image: "https://cdn-icons-png.flaticon.com/512/685/685658.png" },
+    { id: 29, name: "Peanut Butter (300g)", price: 4.75, stock: 24, image: "https://cdn-icons-png.flaticon.com/512/867/867671.png" },
+    { id: 30, name: "Cereal Box", price: 3.99, stock: 27, image: "https://cdn-icons-png.flaticon.com/512/1046/1046869.png" }
+  ];
+  const coupons = {
+    'WELCOME10': 10,
+    'SAVE15': 15,
+    'LOYAL20': 20,
+    'FESTIVE25': 25
+  };
+  let currentUser = null;
+  let cart = [];
+  let transactions = [];
+  let appliedCoupon = null;
+  let rewardPoints = 0;
+
+  // Local Storage keys
+  const STORAGE_KEY = 'supermarket_data';
+  const SESSION_KEY = 'supermarket_session';
+
+  // Load data
+  function loadData(){
+    const dataRaw = localStorage.getItem(STORAGE_KEY);
+    if(dataRaw){
+      try{
+        const data = JSON.parse(dataRaw);
+        if(data.products) products = data.products;
+        if(data.transactions) transactions = data.transactions;
+      }catch{}
+    }
+  }
+  function saveData(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({products, transactions}));
+  }
+
+  function loadSession(){
+    const sessRaw = sessionStorage.getItem(SESSION_KEY);
+    if(sessRaw){
+      try{
+        currentUser = JSON.parse(sessRaw);
+      }catch{}
+    }
+  }
+  function saveSession(){
+    if(currentUser) sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+    else sessionStorage.removeItem(SESSION_KEY);
+  }
+
+  // Format currency helper
+  function formatUSD(value){
+    return '$'+value.toFixed(2);
+  }
+
+  // Authenticate user on login
+  function authenticate(username, password){
+    const user = usersDB.find(u => u.username === username && u.password === password);
+    return user ? {username: user.username, role: user.role} : null;
+  }
+
+  // UI Elements
+  const loginView = document.getElementById('loginView');
+  const usernameInput = document.getElementById('usernameInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
+
+  const navBar = document.getElementById('navBar');
+  const currentUserDisplay = document.getElementById('currentUserDisplay');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const darkModeToggle = document.getElementById('darkModeToggle');
+
+  const mainContent = document.getElementById('mainContent');
+  const userPanel = document.getElementById('userPanel');
+  const adminPanel = document.getElementById('adminPanel');
+  const userInfo = document.getElementById('userInfo');
+
+  const rewardPointsDisplay = document.getElementById('rewardPointsDisplay');
+  const loyaltyCodeInput = document.getElementById('loyaltyCodeInput');
+  const applyCouponBtn = document.getElementById('applyCouponBtn');
+  const loyaltyMsg = document.getElementById('loyaltyMsg');
+
+  const adminInventoryList = document.getElementById('adminInventoryList');
+  const adminAddForm = document.getElementById('adminAddForm');
+  const adminMsg = document.getElementById('adminMsg');
+  const newProductNameInput = document.getElementById('newProductName');
+  const newProductPriceInput = document.getElementById('newProductPrice');
+  const newProductStockInput = document.getElementById('newProductStock');
+  const newProductImageInput = document.getElementById('newProductImage');
+
+  const productFilterInput = document.getElementById('productFilter');
+  const productListElem = document.getElementById('productList');
+
+  const cartListElem = document.getElementById('cartList');
+  const cartTotalElem = document.getElementById('cartTotal');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const checkoutMsg = document.getElementById('checkoutMsg');
+
+  const modalOverlay = document.getElementById('modalOverlay');
+  const orderSummaryElem = document.getElementById('orderSummary');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  // Dark mode toggle
+  darkModeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    darkModeToggle.setAttribute('aria-pressed', isDark);
+  });
+
+  // Login process
+  loginBtn.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+    if(!username || !password){
+      loginError.textContent = 'Please enter username and password.';
+      return;
+    }
+    const authUser = authenticate(username, password);
+    if(authUser){
+      currentUser = authUser;
+      saveSession();
+      loginError.textContent = '';
+      usernameInput.value = '';
+      passwordInput.value = '';
+      renderApp();
+    }else{
+      loginError.textContent = 'Invalid username or password.';
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    currentUser = null;
+    cart = [];
+    appliedCoupon = null;
+    rewardPoints = 0;
+    saveSession();
+    saveData();
+    renderApp();
+  });
+
+  // Render nav bar
+  function renderNavBar(){
+    if(currentUser){
+      navBar.hidden = false;
+      currentUserDisplay.textContent = `Hello, ${currentUser.username} (${currentUser.role}) - Points: ${rewardPoints}`;
+    } else {
+      navBar.hidden = true;
+      currentUserDisplay.textContent = '';
+    }
+  }
+
+  // Render login / main content views
+  function renderApp(){
+    if(!currentUser){
+      loginView.classList.remove('hidden');
+      mainContent.classList.add('hidden');
+      renderNavBar();
+      return;
+    }
+    loginView.classList.add('hidden');
+    mainContent.classList.remove('hidden');
+    renderNavBar();
+    if(currentUser.role === 'admin'){
+      userPanel.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      renderAdminPanel();
+    } else {
+      userPanel.classList.remove('hidden');
+      adminPanel.classList.add('hidden');
+      renderUserPanel();
+      renderLoyalty();
+    }
+    renderCatalog();
+    renderCart();
+    renderBalance();
+    renderFinancialSummary();
+    renderTransactions();
+  }
+
+  // Render user panel info
+  function renderUserPanel(){
+    userInfo.textContent = `User: ${currentUser.username}`;
+  }
+
+  // Render loyalty: display points etc
+  function renderLoyalty(){
+    rewardPointsDisplay.textContent = `Reward points: ${rewardPoints}`;
+    loyaltyMsg.textContent = '';
+    loyaltyCodeInput.value = '';
+  }
+
+  // Render catalog filtered by input
+  function renderCatalog(){
+    const filter = productFilterInput.value.trim().toLowerCase();
+    productListElem.innerHTML = '';
+    const filtered = products.filter(p => p.name.toLowerCase().includes(filter));
+    if(filtered.length === 0){
+      productListElem.innerHTML = '<p>No products found.</p>';
+      return;
+    }
+    filtered.forEach(p => {
+      const disabled = p.stock <= 0 ? 'disabled' : '';
+      const btnText = p.stock <= 0 ? 'Out of Stock' : 'Add to Cart';
+      const elem = document.createElement('div');
+      elem.className = 'product-card';
+      elem.tabIndex = 0;
+      elem.innerHTML = `
+        <img src="${p.image}" alt="${p.name}" />
+        <div class="product-name" title="${p.name}">${p.name}</div>
+        <div class="product-price">${formatUSD(p.price)}</div>
+        <div class="product-stock">Stock: ${p.stock}</div>
+        <button class="btn-add" data-id="${p.id}" ${disabled}>${btnText}</button>
+      `;
+      productListElem.appendChild(elem);
+    });
+  }
+
+  // Render cart items
+  function renderCart(){
+    cartListElem.innerHTML = '';
+    if(cart.length === 0){
+      cartListElem.innerHTML = '<p>Your cart is empty.</p>';
+      checkoutBtn.disabled = true;
+      checkoutBtn.setAttribute('aria-disabled','true');
+      cartTotalElem.textContent = 'Total: $0.00';
+      checkoutMsg.textContent = '';
+      return;
+    }
+    cart.forEach(item => {
+      const p = products.find(x => x.id === item.id);
+      if(!p) return;
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <div class="item-info" title="${item.name}">
+          <img src="${p.image}" alt="${item.name}"/>
+          <div class="item-name">${item.name}</div>
+        </div>
+        <div class="item-qty">
+          <button class="btn-decrease" data-id="${item.id}" aria-label="Decrease quantity of ${item.name}">-</button>
+          <span>${item.quantity}</span>
+          <button class="btn-increase" data-id="${item.id}" aria-label="Increase quantity of ${item.name}">+</button>
+          <button class="btn-remove" data-id="${item.id}" aria-label="Remove ${item.name} from cart">&times;</button>
+        </div>
+        <div class="item-price">${formatUSD(p.price * item.quantity)}</div>
+      `;
+      cartListElem.appendChild(div);
+    });
+    // Total calculation with coupon
+    let total = cart.reduce((acc, ci) => {
+      const product = products.find(p => p.id === ci.id);
+      return product ? acc + product.price * ci.quantity : acc;
+    }, 0);
+    if(appliedCoupon){
+      total *= (1 - appliedCoupon.discount / 100);
+      checkoutMsg.textContent = `Coupon ${appliedCoupon.code} applied: -${appliedCoupon.discount}%`;
+    } else {
+      checkoutMsg.textContent = '';
+    }
+    cartTotalElem.textContent = `Total: ${formatUSD(total)}`;
+    checkoutBtn.disabled = false;
+    checkoutBtn.removeAttribute('aria-disabled');
+  }
+
+  // Render balance and update rewards points display
+  function renderBalance(){
+    rewardPointsDisplay.textContent = `Reward Points: ${rewardPoints}`;
+  }
+
+  // Render admin inventory table
+  function renderAdminPanel(){
+    adminInventoryList.innerHTML = '';
+    products.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><img src="${p.image}" alt="${p.name}" /></td>
+        <td>${p.name}</td>
+        <td>${formatUSD(p.price)}</td>
+        <td>${p.stock}</td>
+        <td>
+          <button class="admin-increase-stock" data-id="${p.id}" aria-label="Increase stock for ${p.name}">+</button>
+          <button class="admin-decrease-stock" data-id="${p.id}" aria-label="Decrease stock for ${p.name}">-</button>
+        </td>
+      `;
+      adminInventoryList.appendChild(tr);
+    });
+    adminMsg.textContent = '';
+    newProductNameInput.value = '';
+    newProductPriceInput.value = '';
+    newProductStockInput.value = '';
+    newProductImageInput.value = '';
+  }
+
+  // Render financial summary
+  function renderFinancialSummary(){
+    // Calculate spent
+    const totalSpent = transactions.reduce((acc, t) => t.amount < 0 ? acc + Math.abs(t.amount) : acc, 0);
+    const totalEarned = transactions.reduce((acc, t) => t.amount > 0 ? acc + t.amount : acc, 0);
+    document.getElementById('totalProfit').textContent = formatUSD(totalEarned);
+    document.getElementById('totalLoss').textContent = formatUSD(totalSpent);
+    document.getElementById('netTotal').textContent = formatUSD(totalEarned - totalSpent);
+  }
+
+  // Render transaction history
+  function renderTransactions(){
+    const transactionList = document.getElementById('transactionList');
+    if(transactions.length === 0){
+      transactionList.innerHTML = '<li>No transactions yet.</li>';
+      return;
+    }
+    transactionList.innerHTML = '';
+    transactions.slice().reverse().forEach(txn => {
+      const li = document.createElement('li');
+      li.className = txn.amount > 0 ? 'profit' : 'loss';
+      li.textContent = `${txn.date} - ${txn.description} - ${txn.amount > 0 ? '+' : '-'}${formatUSD(Math.abs(txn.amount))}`;
+      transactionList.appendChild(li);
+    });
+  }
+
+  // Handle add to cart
+  productListElem.addEventListener('click', e => {
+    if(!e.target.classList.contains('btn-add')) return;
+    const id = +e.target.dataset.id;
+    const product = products.find(p => p.id === id);
+    if(!product || product.stock <= 0) return alert('Out of stock');
+    const cartItem = cart.find(c => c.id === id);
+    if(cartItem){
+      if(cartItem.quantity >= product.stock) return alert('No more stock available');
+      cartItem.quantity++;
+    } else {
+      cart.push({id: id, name: product.name, quantity: 1});
+    }
+    renderCart();
+  });
+
+  // Handle cart quantity buttons
+  cartListElem.addEventListener('click', e => {
+    const id = +e.target.dataset.id;
+    if(!id) return;
+    const index = cart.findIndex(c => c.id === id);
+    if(index === -1) return;
+    if(e.target.classList.contains('btn-increase')){
+      const prod = products.find(p => p.id === id);
+      if(cart[index].quantity < prod.stock){
+        cart[index].quantity++;
+      } else {
+        alert('Stock limit reached.');
+      }
+    } else if(e.target.classList.contains('btn-decrease')){
+      cart[index].quantity--;
+      if(cart[index].quantity <= 0) cart.splice(index,1);
+    } else if(e.target.classList.contains('btn-remove')){
+      cart.splice(index,1);
+    }
+    renderCart();
+  });
+
+  // Handle checkout
+  checkoutBtn.addEventListener('click', () => {
+    if(cart.length === 0) return;
+    let total = cart.reduce((acc, c) => {
+      const prod = products.find(p => p.id === c.id);
+      return prod ? acc + prod.price * c.quantity : acc;
+    }, 0);
+    if(appliedCoupon){
+      total = total * (1 - appliedCoupon.discount / 100);
+    }
+    if(total > rewardPointsBalance()){ // Using reward points to pay not balance currently, see below for basic balance
+      if(total > balanceValue()){
+        checkoutMsg.textContent = 'Insufficient balance!';
+        return;
+      }
+    }
+    checkoutMsg.textContent = '';
+    // Show modal
+    let summary = '';
+    cart.forEach(c => {
+      const prod = products.find(p => p.id === c.id);
+      if(prod){
+        summary += `${prod.name} × ${c.quantity} = ${formatUSD(prod.price * c.quantity)}<br>`;
+      }
+    });
+    summary += `<hr><strong>Total: ${formatUSD(total)}</strong>`;
+    orderSummaryElem.innerHTML = summary;
+    modalOverlay.style.display = 'flex';
+    modalOverlay.focus();
+    trapFocus(modalOverlay);
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    modalOverlay.style.display = 'none';
+    completePurchase();
+    renderApp();
+    checkoutBtn.focus();
+    removeTrapFocus();
+  });
+
+  modalOverlay.addEventListener('click', e => {
+    if(e.target === modalOverlay) closeModalBtn.click();
+  });
+
+  // Loyalty coupon apply
+  applyCouponBtn.addEventListener('click', () => {
+    const code = loyaltyCodeInput.value.trim().toUpperCase();
+    if(!code){
+      loyaltyMsg.textContent = 'Please enter coupon code.';
+      return;
+    }
+    if(coupons[code]){
+      appliedCoupon = {code: code, discount: coupons[code]};
+      loyaltyMsg.textContent = `Coupon applied: ${code}, ${coupons[code]}% discount.`;
+      loyaltyMsg.style.color = '#1c7430';
+    } else {
+      appliedCoupon = null;
+      loyaltyMsg.textContent = 'Invalid coupon code!';
+      loyaltyMsg.style.color = '#b32020';
+    }
+    loyaltyCodeInput.value = '';
+    renderCart();
+  });
+
+  loyaltyCodeInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') applyCouponBtn.click();
+  });
+
+  // Admin increase/decrease stock buttons
+  adminInventoryList.addEventListener('click', e => {
+    if(e.target.classList.contains('admin-increase-stock')){
+      const id = +e.target.dataset.id;
+      const prod = products.find(p => p.id === id);
+      if(prod){
+        prod.stock++;
+        saveData();
+        renderAdminPanel();
+        renderCatalog();
+      }
+    } else if(e.target.classList.contains('admin-decrease-stock')){
+      const id = +e.target.dataset.id;
+      const prod = products.find(p => p.id === id);
+      if(prod && prod.stock > 0){
+        prod.stock--;
+        saveData();
+        renderAdminPanel();
+        renderCatalog();
+      }
+    }
+  });
+
+  // Admin add product form submit
+  adminAddForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = newProductNameInput.value.trim();
+    const price = parseFloat(newProductPriceInput.value);
+    const stock = parseInt(newProductStockInput.value);
+    const image = newProductImageInput.value.trim();
+    adminMsg.style.color = '#b32020';
+    if(!name || isNaN(price) || price <= 0 || isNaN(stock) || stock < 0 || !image){
+      adminMsg.textContent = 'Please fill all fields correctly.';
+      return;
+    }
+    if(products.some(p => p.name.toLowerCase() === name.toLowerCase())){
+      adminMsg.textContent = 'Product with this name already exists.';
+      return;
+    }
+    const id = products.reduce((maxId, p) => Math.max(maxId, p.id), 0) + 1;
+    products.push({id, name, price, stock, image});
+    adminMsg.style.color = '#1c7430';
+    adminMsg.textContent = `Added product '${name}'.`;
+    saveData();
+    renderAdminPanel();
+    renderCatalog();
+    newProductNameInput.value = '';
+    newProductPriceInput.value = '';
+    newProductStockInput.value = '';
+    newProductImageInput.value = '';
+  });
+
+  // Dark mode toggle
+  darkModeToggle.addEventListener('click', () => {
+    const darkModeOn = document.body.classList.toggle('dark');
+    darkModeToggle.setAttribute('aria-pressed', darkModeOn);
+  });
+
+  // Product filter input listener
+  productFilterInput.addEventListener('input', () => {
+    renderCatalog();
+  });
+
+  // Prevent negative reward points or balance by simple getters
+  function rewardPointsBalance(){
+    return rewardPoints;
+  }
+  function balanceValue(){
+    // Simulate user's balance as large number (or extend to have real balance system)
+    // For demo, fixed 100
+    return 100;
+  }
+
+  // Complete a purchase: reduces stock, adds transaction, adds points, empties cart
+  function completePurchase(){
+    if(cart.length === 0) return;
+    let total = 0;
+    cart.forEach(c => {
+      const prod = products.find(p => p.id === c.id);
+      if(prod){
+        prod.stock -= c.quantity;
+        total += prod.price * c.quantity;
+      }
+    });
+    if(appliedCoupon){
+      total *= (1 - appliedCoupon.discount/100);
+    }
+    transactions.push({
+      date: new Date().toLocaleString(),
+      description: `Purchase (${cart.length} item${cart.length > 1 ? 's' : ''})`,
+      amount: -total
+    });
+    // Add reward points (1 point per dollar spent)
+    rewardPoints += Math.floor(total);
+    cart = [];
+    appliedCoupon = null;
+    loyaltyMsg.textContent = '';
+    saveData();
+  }
+
+  // Render admin panel inventory table
+  function renderAdminPanel(){
+    adminInventoryList.innerHTML = '';
+    products.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><img src="${p.image}" alt="${p.name}" /></td>
+        <td>${p.name}</td>
+        <td>${formatUSD(p.price)}</td>
+        <td>${p.stock}</td>
+        <td>
+          <button class="admin-increase-stock" data-id="${p.id}" aria-label="Increase stock for ${p.name}">+</button>
+          <button class="admin-decrease-stock" data-id="${p.id}" aria-label="Decrease stock for ${p.name}">-</button>
+        </td>
+      `;
+      adminInventoryList.appendChild(tr);
+    });
+    adminMsg.textContent = '';
+    newProductNameInput.value = '';
+    newProductPriceInput.value = '';
+    newProductStockInput.value = '';
+    newProductImageInput.value = '';
+  }
+
+  // Render financial summary (left for further expansion if needed)
+  function renderFinancialSummary(){
+    // Optional: add logic if needed
+  }
+  // Render transaction history (left for further expansion if needed)
+  function renderTransactions(){
+    // Optional: add logic if needed
+  }
+
+  // Focus trap for modal
+  let firstTabStop, lastTabStop;
+  function trapFocus(element){
+    const focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable]';
+    const focusableElements = element.querySelectorAll(focusableElementsString);
+    firstTabStop = focusableElements[0];
+    lastTabStop = focusableElements[focusableElements.length - 1];
+    element.addEventListener('keydown', trapTabKey);
+  }
+  function trapTabKey(e){
+    if(e.key === "Tab"){
+      if(e.shiftKey){
+        if(document.activeElement === firstTabStop){
+          e.preventDefault();
+          lastTabStop.focus();
+        }
+      } else {
+        if(document.activeElement === lastTabStop){
+          e.preventDefault();
+          firstTabStop.focus();
+        }
+      }
+    } else if(e.key === "Escape"){
+      closeModalBtn.click();
+    }
+  }
+  function removeTrapFocus(){
+    modalOverlay.removeEventListener('keydown', trapTabKey);
+  }
+
+  // Event listener for modal close
+  closeModalBtn.addEventListener('click', () => {
+    modalOverlay.style.display = 'none';
+    completePurchase();
+    renderApp();
+    checkoutBtn.focus();
+    removeTrapFocus();
+  });
+  modalOverlay.addEventListener('click', e => {
+    if(e.target === modalOverlay) closeModalBtn.click();
+  });
+
+  // Initialize the app: load data, session, render UI
+  function init(){
+    loadData();
+    loadSession();
+    renderApp();
+  }
+  window.addEventListener('load', init);
+  // Save data before unload
+  window.addEventListener('beforeunload', saveData);
+})();
+</script>
+</body>
+</html>
